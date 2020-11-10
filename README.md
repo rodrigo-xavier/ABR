@@ -29,11 +29,14 @@ O código a seguir executa o instalador automático do pyenv.
 Em seguida, instale o python versão 3.8.4 utilizando o pacote pyenv, da seguinte forma:
 
     pyenv install 3.8.4
-    pyenv shell 3.8.4
 
-Faça um clone do meu repositório:
+Faça um clone do repositório:
 
     https://github.com/rodrigo-xavier/MBR.git
+
+Ative a versão do python 3.8.4 no seu shell atual para rodar os comandos posteriores (importante dizer que se você mudar de janela do shell, terá que fazer isto novamente, mas não será necessário após ter um virtualenv criado):
+
+    pyenv shell 3.8.4
 
 Agora crie uma virtualenv, ative-a, faça o upgrade do pip e instale os requisitos do projeto:
 
