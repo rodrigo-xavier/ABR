@@ -25,10 +25,10 @@ O código a seguir executa o instalador automático do pyenv.
 
     curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 
-Em seguida, instale o python versão 3.8.3 utilizando o pacote pyenv, da seguinte forma:
+Em seguida, instale o python versão 3.8.4 utilizando o pacote pyenv, da seguinte forma:
 
-    pyenv install 3.8.3
-    pyenv shell 3.8.3
+    pyenv install 3.8.4
+    pyenv shell 3.8.4
 
 Faça um clone do meu repositório:
 
