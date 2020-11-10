@@ -1,5 +1,6 @@
 # MBR
 
+
 **Esquema de desenvolvimento:**
 
 1. Crie, ou atribua uma issue para si
@@ -15,3 +16,27 @@
 - variáveis:          Sempre ***minusculas_e_com_underscore***
 - nomes de classes:   Maiuscula no inicio, seguida de minúsculas e ***SemUnderscore***
     
+
+**Sugestões para configurar o ambiente:**
+
+Primeiro instale o pyenv, para obter um ambiente python limpo.
+
+O código a seguir executa o instalador automático do pyenv.
+
+    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+
+Em seguida, instale o python versão 3.8.3 utilizando o pacote pyenv, da seguinte forma:
+
+    pyenv install 3.8.3
+    pyenv shell 3.8.3
+
+Faça um clone do meu repositório:
+
+    https://github.com/rodrigo-xavier/MBR.git
+
+Agora crie uma virtualenv, ative-a, faça o upgrade do pip e instale os requisitos do projeto:
+
+    python -m venv virtualenv
+    source virtualenv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
