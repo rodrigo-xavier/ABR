@@ -1,5 +1,5 @@
 env/
-# .vscode/
+.vscode/
 *.env
 __pycache__/
 *sqlite3
@@ -17,6 +17,7 @@ htmlcov/
 coverage.xml
 *.cover
 *.pytest_cache
+pydash/
 
 
 # Ignore Migrations

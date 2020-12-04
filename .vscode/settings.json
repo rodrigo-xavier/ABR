@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/home/cyber/GitHub/.envs/mbr/bin/python",
+    "python.pythonPath": "/home/cyber/GitHub/.envs/abr/bin/python",
     "python.linting.pycodestyleEnabled": false,
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
