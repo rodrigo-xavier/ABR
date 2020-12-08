@@ -107,10 +107,12 @@ class ConnectionHandler(SimpleModule):
         mdp_file = ''
 
         try:
+            print("\n")
             connection = http.client.HTTPConnection(host_name, port)
             connection.request('GET', path_name)
             mdp_file = connection.getresponse().read().decode()
             connection.close()
+            print("\n")
         except Exception as err:
             print('> Houston, we have a problem!')
             print(f'> trying to connecto to: {msg.get_payload()}')
@@ -147,10 +149,12 @@ class ConnectionHandler(SimpleModule):
         print(f'Execution Time {self.timer.get_current_time()} > selected QI: {self.qi.index(msg.get_quality_id())}')
 
         try:
+            print("\n")
             connection = http.client.HTTPConnection(host_name, port)
             connection.request('GET', path_name)
             ss_file = connection.getresponse().read()
             connection.close()
+            print("\n")
         except Exception as err:
             print('> Houston, we have a problem!')
             print(f'> trying to connecto to: {msg.get_payload()}')
