@@ -27,6 +27,7 @@ class R2ABola(IR2A):
         self.vm = 0
 
         self.last_throughput = 0
+        self.last_selected_qi = 0
 
     def handle_xml_request(self, msg):
         self.request_time = time.perf_counter()
@@ -66,31 +67,8 @@ class R2ABola(IR2A):
         self.send_up(msg)
 
     def handle_segment_size_request(self, msg):
-        
-        '''
-        print(msg.get_payload())
-        print(msg.get_kind())
-        print(msg.get_bit_length())
-        print(msg.get_host_name())
-        print(msg.get_segment_id())
-        print(msg.get_segment_size())
-        print(msg.get_quality_id())
-        print(msg.found())
-        print(msg.get_url())
-        '''
 
-        print(msg.get_bit_length())
-
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-        print(self.whiteboard.get_playback_segment_size_time_at_buffer())
-        print(self.whiteboard.get_buffer())
-        print(self.whiteboard.get_amount_video_to_play())
-        print(self.whiteboard.get_max_buffer_size())
-        print(self.whiteboard.get_playback_qi())
-        print(self.whiteboard.get_playback_pauses())
-        print(self.whiteboard.get_playback_buffer_size())
-        print(self.whiteboard.get_playback_history())
-        print(self.whiteboard.get_playback_buffer_size())
+        # print_informations(self, msg)
 
         current_playtime = int(msg.get_segment_id()) * int(msg.get_segment_size())
         p = msg.get_segment_size()
@@ -100,12 +78,6 @@ class R2ABola(IR2A):
 
         Q_D_max = min(self.max_buffer_size, t1/p)
         V_D = (Q_D_max-1)/(self.vm + self.gama*p)
-
-        print(self.whiteboard.get_max_buffer_size())
-
-        print("self.whiteboard.get_playback_buffer_size(): " + str(self.whiteboard.get_playback_buffer_size()))
-        print("self.whiteboard.get_playback_buffer_size(): " + str(len(self.whiteboard.get_playback_buffer_size())))
-        print("self.player.get_buffer_size(): " + str((player.get_buffer_size())))
         
         if len(self.whiteboard.get_playback_buffer_size()) == 0:
             current_buffer_size = 0
@@ -142,3 +114,27 @@ class R2ABola(IR2A):
 
     def finalization(self):
         pass
+
+def print_informations(r2a, msg):
+    print(msg.get_payload())
+    print(msg.get_kind())
+    print(msg.get_bit_length())
+    print(msg.get_host_name())
+    print(msg.get_segment_id())
+    print(msg.get_segment_size())
+    print(msg.get_quality_id())
+    print(msg.found())
+    print(msg.get_url())
+
+    print(msg.get_bit_length())
+
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(r2a.whiteboard.get_playback_segment_size_time_at_buffer())
+    print(r2a.whiteboard.get_buffer())
+    print(r2a.whiteboard.get_amount_video_to_play())
+    print(r2a.whiteboard.get_max_buffer_size())
+    print(r2a.whiteboard.get_playback_qi())
+    print(r2a.whiteboard.get_playback_pauses())
+    print(r2a.whiteboard.get_playback_buffer_size())
+    print(r2a.whiteboard.get_playback_history())
+    print(r2a.whiteboard.get_playback_buffer_size())
