@@ -6,6 +6,7 @@
 from player.parser import *
 from r2a.ir2a import IR2A
 import time
+import math
 import re
 
 
@@ -16,6 +17,8 @@ class R2ABolaFinite(IR2A):
         self.request_time = 0
         self.qi = []
         self.gamma = 5
+        self.last_selected_qi = 0
+        self.bandwidth_of_last_segment = 0
 
         # r(n,t,b) table (maximum utility possible)
         # N - Segments of video
@@ -44,6 +47,8 @@ class R2ABolaFinite(IR2A):
         hours, minutes, seconds = re.findall(r"[-+]?\d*\.\d+|\d+", duration)
         self.video_duration_in_seconds = float(hours)*60*60 + float(minutes)*60 + float(seconds)
 
+        self.vm = [math.log(bitrate/self.qi[0]) for bitrate in self.qi]
+
         self.send_up(msg)
 
     def handle_segment_size_request(self, msg):
@@ -58,15 +63,38 @@ class R2ABolaFinite(IR2A):
         new_time = max(time/2, 3*segment_size)
 
         Q_D_max = min(self.whiteboard.get_max_buffer_size(), new_time/segment_size)
-        V_D = (Q_D_max - 1)/(vm * self.gamma*segment_size)
+        V_D = (Q_D_max - 1)/(self.vm[self.last_selected_qi] * self.gamma*segment_size)
 
         # TODO: Implementar vm e alterar o array de self.qi[0]
-        selected_qi = argmax((V_D*vm + V_D*self.gamma*segment_size - self.whiteboard.get_playback_buffer_size())/self.qi[0])
+        estimated_qi = self.argmax((V_D*self.vm[self.last_selected_qi] + V_D*self.gamma*segment_size - self.whiteboard.get_playback_buffer_size())/self.qi[self.last_selected_qi])
 
-        if selected_qi > self.last_selected_qi:
-            bitrate = max[self.bandwidth_of_last_segment, self.qi[0]/segment_size]
+        if estimated_qi > self.last_selected_qi:
+            new_qi_array = [s/segment_size for s in self.qi]
+            
+            print(new_qi_array)
+            
+            bandwidth = max[self.bandwidth_of_last_segment, self.qi[0]/segment_size]
 
-        msg.add_quality_id(self.qi[10])
+            for i in new_qi_array:
+                if bandwidth > i:
+                    selected_qi = new_qi_array[i]
+            
+            print(selected_qi)
+
+            if selected_qi >= estimated_qi:
+                selected_qi = estimated_qi
+            elif selected_qi < self.last_selected_qi:
+                selected_qi = self.last_selected_qi
+            else:
+                selected_qi = selected_qi + 1 # BOLA-U
+
+            self.last_selected_qi = selected_qi
+
+
+        time.sleep(max((self.segment_time * (self.whiteboard.get_playback_buffer_size() - Q_D_max)), 0))
+        msg.add_quality_id(self.qi_array[selected_qi])
+        self.request_time = time.perf_counter()
+
         self.send_down(msg)
 
     def handle_segment_size_response(self, msg):
