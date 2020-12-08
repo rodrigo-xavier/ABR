@@ -15,6 +15,7 @@ class R2ABolaFinite(IR2A):
         IR2A.__init__(self, id)
         self.request_time = 0
         self.qi = []
+        self.gamma = 5
 
         # r(n,t,b) table (maximum utility possible)
         # N - Segments of video
@@ -24,7 +25,9 @@ class R2ABolaFinite(IR2A):
         # p - seconds of video per segment
         # M - different bitrates
         # m - bitrate [0...M]
+        # Sm - size of m
         # Qmax - max size of the buffer
+        # Q - buffer level (available buffer)
         # V - parameter control (if V > 0 allow a tradeoff between the buffer size and the performance objectives)
         # vm - 
         # y - is an input weight parameter for prioritizing playback utility versus the playback smoothness
@@ -44,26 +47,31 @@ class R2ABolaFinite(IR2A):
         self.send_up(msg)
 
     def handle_segment_size_request(self, msg):
-        msg.add_quality_id(self.qi[10])
-        self.send_down(msg)
-
-    def handle_segment_size_response(self, msg):
         if not self.whiteboard.get_playback_qi():
             current_playtime = 0
         else:
             current_playtime = self.whiteboard.get_playback_qi()[0][0]
 
+        segment_size = msg.get_segment_size()
+
         time = min(current_playtime, self.video_duration_in_seconds - current_playtime)
-        new_time = max(time/2, 3*msg.get_segment_size())
+        new_time = max(time/2, 3*segment_size)
 
-        Q_D_max = min(self.whiteboard.get_max_buffer_size(), new_time/self.video_duration_in_seconds)
-        V_D = (Q_D_max - 1)/()
+        Q_D_max = min(self.whiteboard.get_max_buffer_size(), new_time/segment_size)
+        V_D = (Q_D_max - 1)/(vm * self.gamma*segment_size)
 
-        selected_qi = argmax(V_D*vm + V_D*yp - Q)/Sm
+        # TODO: Implementar vm e alterar o array de self.qi[0]
+        selected_qi = argmax((V_D*vm + V_D*self.gamma*segment_size - self.whiteboard.get_playback_buffer_size())/self.qi[0])
 
+        if selected_qi > self.last_selected_qi:
+            bitrate = max[self.bandwidth_of_last_segment, self.qi[0]/segment_size]
 
+        msg.add_quality_id(self.qi[10])
+        self.send_down(msg)
 
-        # print(self.whiteboard.get_playback_buffer_size())
+    def handle_segment_size_response(self, msg):
+        segment_download_time = time.perf_counter() - self.request_time
+        self.bandwidth_of_last_segment = msg.get_bit_length()/segment_download_time
         self.send_up(msg)
 
     def initialize(self):
