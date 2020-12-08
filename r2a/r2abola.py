@@ -21,9 +21,6 @@ class R2ABola(IR2A):
         self.send_down(msg)
 
     def handle_xml_response(self, msg):
-        # print(dir(msg))
-        # print(msg.get_payload())
-        # exit(0)
         parsed_mpd = parse_mpd(msg.get_payload())
         self.qi = parsed_mpd.get_qi()
 
